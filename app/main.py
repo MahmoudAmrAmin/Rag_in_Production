@@ -4,6 +4,9 @@ dot_env_path = find_dotenv()
 load_dotenv(dot_env_path)
 
 
-from routes import base
+from app.routes import base
+
+
+
 app = FastAPI()
 app.include_router(base.base_router)
