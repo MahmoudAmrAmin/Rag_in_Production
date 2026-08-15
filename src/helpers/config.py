@@ -1,0 +1,17 @@
+from pydantic_settings import BaseSettings , SettingsConfigDict
+from dotenv import load_dotenv , find_dotenv
+
+
+class Settings(BaseSettings) : 
+    # use data vaildation concepts from pydentic  
+    APP_NAME : str 
+    APP_VERSION :str 
+    class Config: 
+        env_file = find_dotenv()  
+
+
+# here we will make functi on that return object from Settings class 
+
+def get_settings() : 
+    return Settings()
+         
