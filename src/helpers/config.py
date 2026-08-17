@@ -6,6 +6,10 @@ class Settings(BaseSettings) :
     # use data vaildation concepts from pydentic  
     APP_NAME : str 
     APP_VERSION :str 
+    # Define File Validation information 
+    FILE_ALLOWED_TYPES:list 
+    FILE_MAX_SIZE:int
+    FILE_DEFAULT_CHUNK_SIZE:int
     class Config: 
         env_file = find_dotenv()  
 

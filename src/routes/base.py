@@ -1,7 +1,5 @@
 from fastapi import FastAPI , APIRouter , Depends
-from dotenv import load_dotenv , find_dotenv
 from src.helpers.config import get_settings ,Settings
-import os 
 base_router = APIRouter(
     # prefix paramters give all endpoint same prefix of path
     prefix='/api/v1' , 
