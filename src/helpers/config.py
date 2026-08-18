@@ -3,7 +3,7 @@ from dotenv import load_dotenv , find_dotenv
 
 
 class Settings(BaseSettings) : 
-    # use data vaildation concepts from pydentic  
+    # use data validation concepts from pydentic  
     APP_NAME : str 
     APP_VERSION :str 
     # Define File Validation information 
