@@ -1,9 +1,10 @@
-from fastapi import FastAPI , APIRouter , Depends ,UploadFile , status
+from fastapi import FastAPI , APIRouter , Depends ,UploadFile , status , Request 
 from fastapi.responses import JSONResponse
 from src.helpers import get_settings , Settings
 from src.controllers import DataController , FileController , ProcessController 
 from src.models import ResponseSignal
-from .schemes.data import ProcessRequest 
+from .schemes.data import ProcessRequest  
+from src.models.FileModel import FileModel
 import os 
 import aiofiles
 import logging
@@ -19,12 +20,16 @@ data_logic = DataController()
 file_logic = FileController()
 
 # upload endpoint in data route
-@data_route.post('/upload/{folder_num}') 
-async def upload_data(folder_num:str , file :UploadFile , app_settings:Settings = Depends(get_settings)) : 
+@data_route.post('/upload/{project_id}') 
+async def upload_data( project_id:str , file :UploadFile ,
+                       app_settings:Settings = Depends(get_settings) ) : 
 
+    # file_model = FileModel(
+    #     db_clint=request.app.db_clint
+    # )
+    
     # validate file properties 
     is_valid , result_message = data_logic.validate_uploading_file(file=file)
-    file_dir_path = file_logic.get_file_path( folder_num=folder_num)
     if not is_valid: 
         return JSONResponse(
             status_code=status.HTTP_400_BAD_REQUEST , 
@@ -32,10 +37,14 @@ async def upload_data(folder_num:str , file :UploadFile , app_settings:Settings 
                 'message' : result_message 
             }
         )
-    file_path , gen_file_id = data_logic.generate_unique_file_path(
-        ori_file_name= file.filename , 
-        folder_num=folder_num
+    project_dir_path = file_logic.get_file_path(project_id=project_id) 
+    file_path , file_id = data_logic.generate_unique_file_path(
+         ori_file_name=file.filename , 
+         project_id=project_id
+
     )
+
+
     try : 
         async with aiofiles.open(file_path , 'wb') as f : 
             while chunk := await file.read(app_settings.FILE_DEFAULT_CHUNK_SIZE): 
@@ -49,16 +58,20 @@ async def upload_data(folder_num:str , file :UploadFile , app_settings:Settings 
                         'message' : ResponseSignal.FILE_UPLOAD_FAILED.value  
                     }
                 )
+    # target_file = await file_model.get_or_create_file(file_id=gen_file_id)
 
-
-    
     return JSONResponse(
         status_code=status.HTTP_200_OK , 
         content={
              'message' : ResponseSignal.FILE_UPLOAD_SUCCESS.value , 
-             'file_id' : gen_file_id  
+             'file_id' : file_id , 
+            #  'target_file_id' :str( target_file._id ) 
         }
     )        
+
+
+
+
 
 @data_route.post('/process/{folder_num}')  
 async def process_file_endpoint(folder_num:str , process_request:ProcessRequest) : 
