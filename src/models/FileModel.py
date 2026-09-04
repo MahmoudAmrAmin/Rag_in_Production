@@ -1,28 +1,32 @@
 from .BaseDataModel import BaseDataModel
 from .database_schemes import  File
-from .enums import DataBaseEnum 
+from .enums.DataBaseEnum import DataBaseEnum
 
 class FileModel(BaseDataModel): 
     def __init__(self, db_clint:object):
-        super().__init__(db_clint) 
+        super().__init__(db_clint = db_clint) 
         self.collection = self.db_clint[DataBaseEnum.COLLECTION_FILE_NAME.value]
 
 
-    async def insert_file(self ,file:File ) : 
-        result = await self.collection.insert_one(file.model_dump())    
+    async def create_project(self ,file:File ) : 
+
+        """ 
+            exclude_unset : means if any attribute has intial value with None make exclude to it 
+        """
+        result = await self.collection.insert_one(file.model_dump(by_alias=True , exclude_unset=True))    
         file._id = result.inserted_id  
 
         return file 
 
-    async def get_or_create_file(self , file_id :str) : 
+    async def get_or_create_project(self , project_id :str) : 
         record = await self.collection.find_one({
-            'file_id' :file_id
+            'file_id' :project_id
         }) 
 
         if record is None :  
             # if not exist will create it 
-            file = File(file_id=file_id) 
-            file = await self.insert_file(file=file) 
+            file = File(project_id=project_id) 
+            file = await self.create_project(file=file) 
 
             return file 
         return File(**record) 
