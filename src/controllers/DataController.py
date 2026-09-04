@@ -26,13 +26,14 @@ class DataController(BaseController):
          
          """
          return False ,ResponseSignal.FILE_SIZE_EXCEEDED.value
+      
       return True  ,ResponseSignal.FILE_UPLOAD_SUCCESS.value 
 
    
-   def generate_unique_file_path(self , ori_file_name: str ,folder_num:str ) : 
+   def generate_unique_file_path(self , ori_file_name: str ,project_id:str ) : 
       rand_key = self.generate_random_string()
 
-      file_path = file_logic.get_file_path(folder_num=folder_num) 
+      file_path = file_logic.get_file_path(project_id=project_id) 
 
       clean_filename = self.get_clean_filename(ori_filename=ori_file_name)
 

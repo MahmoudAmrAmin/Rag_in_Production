@@ -1,1 +1,1 @@
-from .config import get_settings ,Settings
+from src.helpers.config import get_settings ,Settings

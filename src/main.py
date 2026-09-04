@@ -2,8 +2,9 @@ from fastapi import FastAPI
 from src.routes import base , data
 from motor.motor_asyncio import AsyncIOMotorClient
 from src.helpers.config import get_settings
+from contextlib import asynccontextmanager 
 
-
+@asynccontextmanager
 async def lifespan(app:FastAPI) : 
     settings = get_settings() 
     app.mongo_conn = AsyncIOMotorClient(settings.MONGODB_URL)

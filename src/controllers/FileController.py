@@ -8,10 +8,10 @@ class FileController(BaseController):
     def __init__(self):
         super().__init__()
 
-    def get_file_path(self , folder_num:str) : 
+    def get_file_path(self , project_id:str) : 
         file_dir =   os.path.join(
             self.file_dir , 
-            folder_num
+            project_id
         )       
 
         if not os.path.exists(file_dir): 
